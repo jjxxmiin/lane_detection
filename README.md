@@ -9,41 +9,41 @@
 
 # ORDER📢
 
-**Yellow, White Mask ->** [OK]
+**Yellow, White Mask ->** ✔️
 
 
-**BGR to Gray ->** [OK]
+**BGR to Gray ->** ✔️
 
 
-**Canny Edge Detection ->** [OK]
+**Canny Edge Detection ->** ✔️
 
 
-**가우시안 정규화 ->** [OK]
+**가우시안 정규화 ->** ✔️
 
 
-**관심영역 필터링 ->** [OK]
+**관심영역 필터링 ->** ✔️
 
 
-**허프 직선검출 ->** [OK]
+**허프 직선검출 ->** ✔️
 
 
-**차선 검출 ->** [OK]
+**차선 검출 ->** ✔️
 
 
-**차선 그리기 ->** [OK]
+**차선 그리기 ->** ✔️
 
 
 **Moving --** 
 
 # 📣 ADDITION 📣
 
-**perspective transform** [OK]
+**perspective transform** ✔️
 
 
-**kalman filter** [OK]
+**kalman filter** ✔️
 
 
-**line spot detection** [OK]
+**line spot detection** ✔️
 
 
 **red line detection**
