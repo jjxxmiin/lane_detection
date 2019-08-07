@@ -99,9 +99,9 @@
 - [Lane detection using a Kalman filter and Hough line transform](https://github.com/prapulKashyap/lane_detect)
 - [CarND-Extended-Kalman-Filter-Project](https://github.com/nachiket273/Self_Driving_Car/tree/master/CarND-Extended-Kalman-Filter-Project)
 
-**ROS**
+**ROS :running:**
 
-- [http://wiki.ros.org/turtlesim/Tutorials/Moving%20in%20a%20Straight%20Line](http://wiki.ros.org/turtlesim/Tutorials/Moving%20in%20a%20Straight%20Line)
+- [ROS wiki](http://wiki.ros.org/turtlesim/Tutorials/Moving%20in%20a%20Straight%20Line)
 
-**calibration**
-- http://petermoran.org/robust-lane-tracking/
+**calibration :running:**
+- [Robust Lane Tracking](http://petermoran.org/robust-lane-tracking/)
