@@ -167,19 +167,18 @@ def main():
             foundLinesImage = np.zeros((img_h, img_w, 3), dtype=np.uint8)
             #foundLinesImage = np.zeros((img_h, img_w), dtype=np.uint8)
 
-            if L_lines is not None:
+            L_lines_exist = (L_lines.shape != (0L, 1L, 4L))
+            R_lines_exist = (R_lines.shape != (0L, 1L, 4L))
+            
+            if L_lines_exist:
                 L_line = np.array([average_lane(L_lines)])
-            if np.sum(L_line) != 0:
-                cv2.line(foundLinesImage, (L_line[0][0], L_line[0][1]),find_equation(L_line, 'left'), [0,0,255], 10)
-            if R_lines is not None:
+                cv2.line(foundLinesImage, (L_line[0][0], L_line[0][1]), find_equation(L_line, 'left'), [0,0,255], 10)
+            if R_lines_exist:
                 R_line = np.array([average_lane(R_lines)])
-                if np.sum(R_line) != 0:
-                    cv2.line(foundLinesImage, (R_line[0][2], R_line[0][3]), find_equation(R_line, 'right'), [0,0,255], 10)
-            if L_lines is not None and R_lines is not None:
-                if np.sum(L_line) != 0 and np.sum(R_line) != 0:
-                    circle_x, circle_y=find_intersection_pt(L_line, R_line)
-    #             원: cv2.circle( , 중심, 반지름, 색, 두꼐)
-                    cv2.circle(foundLinesImage, (circle_x,circle_y), 10, (0, 255, 255), -1)
+                cv2.line(foundLinesImage, (R_line[0][2], R_line[0][3]), find_equation(R_line,'right'), [0,0,255], 10)
+            if L_lines_exist and R_lines_exist:
+                circle_x, circle_y=find_intersection_pt(L_line, R_line)
+                cv2.circle(foundLinesImage, (circle_x,circle_y), 10, (0, 255, 255), -1)
 
             origWithFoundLanes = weighted_img(foundLinesImage,ori_img)
 
