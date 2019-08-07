@@ -90,7 +90,27 @@ def perspective_transform(img,src,dst):
 
     return warped, unwarped, m, m_inv
 
+def find_equation(line, lr=None, slope=False, y_intercept=False):      # 방정식 구하는 함수, lr은 'left'혹은 'right'
+    for a,b,c,d in line:
+        x1, y1, x2, y2 = a,b,c,d
+        m = (float(y2-y1)/float(x2-x1))    
+        k = y1 - m*x1                  # 절편
+        if lr=='left':                 # 왼쪽 선일 때  
+            result_x = 600 
+        elif lr == 'right':            # 오른쪽 선일 때
+            result_x = 100
+        result_y = m*result_x + k        
+    if slope==True and y_intercept==True:
+        return m, k
+    
+    return int(result_x), int(result_y)
 
+def find_intersection_pt(l_line, r_line):                                   # 교점 구하는 함수
+    m1, b1 = find_equation(l_line, lr='left', slope=True, y_intercept=True)
+    m2, b2 = find_equation(r_line, lr='right', slope=True, y_intercept=True)
+    intersection_pt_x, intersection_pt_y = (float(b2-b1)/float(m1-m2)), m1*(b2-b1)/(m1-m2) +b1
+    return int(intersection_pt_x), 350
+    
 
 def main():
     capture = cv2.VideoCapture("../test/outside_clockwise.avi")
@@ -149,11 +169,18 @@ def main():
             #foundLinesImage = np.zeros((img_h, img_w), dtype=np.uint8)
 
             if L_lines is not None:
-                L_line = np.array([average_lane(L_lines)])
-                draw_lines(foundLinesImage,L_line)
+            L_line = np.array([average_lane(L_lines)])
+            if np.sum(L_line) != 0:
+                cv2.line(foundLinesImage, (L_line[0][0], L_line[0][1]), find_equation(L_line, 'left'), [0,0,255], 10)
             if R_lines is not None:
                 R_line = np.array([average_lane(R_lines)])
-                draw_lines(foundLinesImage,R_line)
+                if np.sum(R_line) != 0:
+                    cv2.line(foundLinesImage, (R_line[0][2], R_line[0][3]), find_equation(R_line, 'right'), [0,0,255], 10)
+            if L_lines is not None and R_lines is not None:
+                if np.sum(L_line) != 0 and np.sum(R_line) != 0:
+                    circle_x, circle_y=find_intersection_pt(L_line, R_line)
+    #             원: cv2.circle( , 중심, 반지름, 색, 두꼐)
+                    cv2.circle(foundLinesImage, (circle_x,circle_y), 10, (0, 255, 255), -1)
 
             origWithFoundLanes = weighted_img(foundLinesImage,ori_img)
 
