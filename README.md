@@ -5,6 +5,7 @@
 # Dependency
 - :strawberry: Raspberry pi 3B+
 - :car: XYTRON
+- :arduino: nucleo
 
 # ORDER
 
