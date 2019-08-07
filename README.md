@@ -8,19 +8,34 @@
 
 # ORDER
 
-```
-Yellow, White Mask ->
-BGR to Gray ->
-Canny Edge Detection ->
-가우시안 정규화 ->
-관심영역 필터링 ->
-허프 직선검출 ->
-+ 두 직선의 기울기를 찾아서 접점을 찾는다. 
-+ 빨간색 선
-차선 검출 ->
-차선 그리기
-```
+**Yellow, White Mask ->**
 
+
+**BGR to Gray ->**
+
+
+**Canny Edge Detection ->**
+
+
+**가우시안 정규화 ->**
+
+
+**관심영역 필터링 ->**
+
+
+**허프 직선검출 ->**
+
+
+**차선 검출 ->**
+
+
+**차선 그리기**
+
+
++ perspective transform
++ kalman filter
++ red line detection
++ line spot detection
 
 # :fire: Reference :fire:
 
