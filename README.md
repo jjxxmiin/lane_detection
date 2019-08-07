@@ -29,13 +29,16 @@
 **차선 검출 ->**
 
 
-**차선 그리기**
+**차선 그리기 ->**
 
+**Moving --**
 
-+ perspective transform
-+ kalman filter
-+ red line detection
-+ line spot detection
+# 📣 ADDITION 📣
+
+perspective transform
+kalman filter
+red line detection
+line spot detection
 
 # :fire: Reference :fire:
 
