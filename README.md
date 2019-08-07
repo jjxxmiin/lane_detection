@@ -61,7 +61,7 @@
 
 - [self-driving-car project](https://github.com/ndrplz/self-driving-car)
 
-- [Perspective transform, Detect boundaries]https://navoshta.com/detecting-road-features/
+- [Perspective transform, Detect boundaries](https://navoshta.com/detecting-road-features/)
 
 - [Perspective Measurement](https://dventimi.github.io/CarND-Advanced-Lane-Lines/writeup.html)
 
