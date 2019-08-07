@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*- 
+
 import cv2
 import numpy as np
 import math
@@ -113,7 +115,7 @@ def find_intersection_pt(l_line, r_line):                                   # êµ
     
 
 def main():
-    capture = cv2.VideoCapture("../test/outside_clockwise.avi")
+    capture = cv2.VideoCapture("./test/outside_clockwise.avi")
 
     img_w = 720 #img.shape[0]
     img_h = 380 #img.shape[1]
@@ -165,9 +167,9 @@ def main():
             #foundLinesImage = np.zeros((img_h, img_w), dtype=np.uint8)
 
             if L_lines is not None:
-            L_line = np.array([average_lane(L_lines)])
+                L_line = np.array([average_lane(L_lines)])
             if np.sum(L_line) != 0:
-                cv2.line(foundLinesImage, (L_line[0][0], L_line[0][1]), find_equation(L_line, 'left'), [0,0,255], 10)
+                cv2.line(foundLinesImage, (L_line[0][0], L_line[0][1]),find_equation(L_line, 'left'), [0,0,255], 10)
             if R_lines is not None:
                 R_line = np.array([average_lane(R_lines)])
                 if np.sum(R_line) != 0:
