@@ -77,17 +77,17 @@ def average_lane(lane_data):
     
     return int(x1), int(y1), int(x2), int(y2)
 
-def perspective_transform(img,src,dst):
-    """
-    Execute perspective transform
-    """
-    img_size = (img.shape[1], img.shape[0])
-    m = cv2.getPerspectiveTransform(src, dst)
-    m_inv = cv2.getPerspectiveTransform(dst, src)
-
-    warped = cv2.warpPerspective(img, m, img_size, flags=cv2.INTER_LINEAR)
+def perspective_transform(img):
+    (h, w) = (img.shape[0], img.shape[1])
+    source = np.float32([[w // 2 - 76, h * .525], [w // 2 + 76, h * .525], [-100, h], [w + 100, h]])
+    #destination = np.float32([[100, 0], [w - 100, 0], [100, h], [w - 100, h]])
+    destination = np.float32([[200, 0], [w - 200, 0], [200, h], [w - 200, h]])
+    m = cv2.getPerspectiveTransform(source, destination)
+    m_inv = cv2.getPerspectiveTransform(destination, source)
+    
+    warped = cv2.warpPerspective(img, m, (w, h))
     unwarped = cv2.warpPerspective(warped, m_inv, (warped.shape[1], warped.shape[0]), flags=cv2.INTER_LINEAR)  # DEBUG
-
+    
     return warped, unwarped, m, m_inv
 
 def find_equation(line, lr=None, slope=False, y_intercept=False):      # 방정식 구하는 함수, lr은 'left'혹은 'right'
@@ -118,13 +118,9 @@ def main():
     img_w = 720 #img.shape[0]
     img_h = 380 #img.shape[1]
     
-    # perspective transform
-    src = np.float32([[img_w*0.2, img_h*0.5],[0, img_h],[img_w, img_h*0.5], [img_w,img_h]])
-    dst = np.float32([[0, img_h*0.5],[0, img_h],[img_w, img_h*0.5], [img_w,img_h]])
-    
     # ROI
-    pts = np.array([[0, img_h], [img_w*0.2, img_h*0.6], [img_w*0.8, img_h*0.6], [img_w,img_h]])
-    
+    #pts = np.array([[0, img_h], [img_w*0.2, img_h*0.6], [img_w*0.8, img_h*0.6], [img_w,img_h]])
+    pts = np.float32([[-100, img_h],[img_w // 2 - 76, img_h * .525], [img_w // 2 + 76,img_h * .525],  [img_w + 100, img_h]])
     while True:    
         ret, img = capture.read()
         
@@ -139,7 +135,7 @@ def main():
         img = canny(img,40,80)
            
         # image perspective transform
-        warped, unwarped, m, m_inv = perspective_transform(ori_img,src,dst)
+        warped, unwarped, m, m_inv = perspective_transform(ori_img)
         
         # 관심영역 추출
         vertices = np.array(pts, np.int32)
