@@ -5,7 +5,7 @@
 # Dependency
 - :strawberry: Raspberry pi 3B+
 - :car: XYTRON
--  💥 nucleo
+-  💥 STM nucleo board
 
 # ORDER
 
