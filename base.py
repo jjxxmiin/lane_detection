@@ -3,6 +3,7 @@
 import cv2
 import numpy as np
 import math
+from imutils.video import WebcamVideoStream
 
 def convert_hls(img):
     return cv2.cvtColor(img, cv2.COLOR_BGR2HLS)
@@ -115,8 +116,8 @@ def find_intersection_pt(l_line, r_line):                                   # êµ
     
 
 def main():
-    capture = cv2.VideoCapture("./test/outside_clockwise.avi")
-
+    #capture = cv2.VideoCapture("./test/outside_clockwise.avi")
+    capture = WebcamVideoStream(src=0).start()
     img_w = 720 #img.shape[0]
     img_h = 380 #img.shape[1]
     
@@ -124,8 +125,8 @@ def main():
     #pts = np.array([[0, img_h], [img_w*0.2, img_h*0.6], [img_w*0.8, img_h*0.6], [img_w,img_h]])
     pts = np.float32([[-100, img_h],[img_w // 2 - 76, img_h * .525], [img_w // 2 + 76,img_h * .525],  [img_w + 100, img_h]])
     while True:    
-        ret, img = capture.read()
-        
+        #ret, img = capture.read()
+        img = capture.read()
         img = cv2.resize(img,(img_w,img_h))
 
         ori_img = img
@@ -186,12 +187,13 @@ def main():
             origWithFoundLanes = ori_img
 
         cv2.imshow('image',origWithFoundLanes)
-        cv2.imshow('warp',warped)
-        cv2.imshow('unwarp',unwarped)
+        #cv2.imshow('warp',warped)
+        #cv2.imshow('unwarp',unwarped)
 
         if cv2.waitKey(33) > 0: break
 
-    capture.release()
+    #capture.release()
+    capture.stop()
     cv2.destroyAllWindows()
     
 if __name__ == '__main__':
