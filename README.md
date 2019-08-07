@@ -5,7 +5,7 @@
 # Dependency
 - :strawberry: Raspberry pi 3B+
 - :car: XYTRON
-- :arduino: nucleo
+-  💥 nucleo
 
 # ORDER
 
@@ -106,3 +106,8 @@
 
 **calibration :running:**
 - [Robust Lane Tracking](http://petermoran.org/robust-lane-tracking/)
+
+
+--------------------------------------
+</br>
+</br>
