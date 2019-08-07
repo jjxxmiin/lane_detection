@@ -58,6 +58,10 @@
 
 - [https://github.com/HyOsori/Osori-SelfDrivingWithGTA5/wiki/%EA%B0%95%EC%A2%8C-6---OpenCV%EB%A5%BC-%EC%9D%B4%EC%9A%A9%ED%95%9C-%EC%B0%A8%EC%84%A0-%EA%B2%80%EC%B6%9C](https://github.com/HyOsori/Osori-SelfDrivingWithGTA5/wiki/%EA%B0%95%EC%A2%8C-6---OpenCV%EB%A5%BC-%EC%9D%B4%EC%9A%A9%ED%95%9C-%EC%B0%A8%EC%84%A0-%EA%B2%80%EC%B6%9C)
 
+- https://github.com/ndrplz/self-driving-car
+
+- https://navoshta.com/detecting-road-features/
+
 **crop :running:**
 
 - [https://github.com/mazyaryousefinia/OpenCV-Crop-Video](https://github.com/mazyaryousefinia/OpenCV-Crop-Video)
@@ -69,3 +73,6 @@
 **ROS**
 
 - [http://wiki.ros.org/turtlesim/Tutorials/Moving%20in%20a%20Straight%20Line](http://wiki.ros.org/turtlesim/Tutorials/Moving%20in%20a%20Straight%20Line)
+
+**calibration**
+-http://petermoran.org/robust-lane-tracking/
