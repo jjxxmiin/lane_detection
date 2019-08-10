@@ -15,7 +15,10 @@
 **BGR to Gray ->** ✔️
 
 
-**Canny Edge Detection ->** ✔️
+**Canny Edge Detection ->** ✔️ 
+*속도가 실시간 처리를 하기에는 조금 부족했다.*
+
+**sobel Edge Detection** -> ❌
 
 
 **가우시안 정규화 ->** ✔️
@@ -33,7 +36,8 @@
 **차선 그리기 ->** ✔️
 
 
-**Moving --** 
+**Moving** ❌ 
+
 
 # 📣 ADDITION 📣
 
@@ -46,10 +50,13 @@
 **line spot detection** ✔️
 
 
-**red line detection**
+**red line(start line) detection** ❌
 
 
-**calibration**
+**calibration** ❌
+
+
+**ROS** ❌
 
 # :fire: Reference :fire:
 
