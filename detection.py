@@ -54,6 +54,48 @@ def gaussian_blur(img, kernel_size):
 def canny(img, low_threshold, high_threshold):
     return cv2.Canny(img, low_threshold, high_threshold)
 
+def abs_sobel_thresh(img, orient='x', sobel_kernel=3, thresh=(0, 255)):    
+    gray = cv2.cvtColor(img, cv2.COLOR_RGB2GRAY)
+    if orient == 'x':
+        abs_sobel = np.absolute(cv2.Sobel(img, cv2.CV_64F, 1, 0, ksize=sobel_kernel))
+    if orient == 'y':
+        abs_sobel = np.absolute(cv2.Sobel(img, cv2.CV_64F, 0, 1, ksize=sobel_kernel))
+    scaled_sobel = np.uint8(255*abs_sobel/np.max(abs_sobel))
+    gradBinary = np.zeros_like(scaled_sobel)
+    gradBinary[(scaled_sobel >= thresh[0]) & (scaled_sobel <= thresh[1])] = 1
+    return gradBinary
+
+def mag_thresh(img, sobel_kernel=3, mag_thresh=(0, 255)):     
+    gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)    
+    sobelx = cv2.Sobel(gray, cv2.CV_64F, 1, 0, ksize=sobel_kernel)
+    sobely = cv2.Sobel(gray, cv2.CV_64F, 0, 1, ksize=sobel_kernel)   
+    gradmag = np.sqrt(sobelx**2 + sobely**2)   
+    scale_factor = np.max(gradmag)/255 
+    gradmag = (gradmag/scale_factor).astype(np.uint8)     
+    magBinary = np.zeros_like(gradmag)
+    magBinary[(gradmag >= mag_thresh[0]) & (gradmag <= mag_thresh[1])] = 1
+    
+    return magBinary
+	
+def hls_select(img, thresh=(0, 255)):   
+    hls = cv2.cvtColor(img, cv2.COLOR_RGB2HLS)    
+    s_channel = hls[:,:,2]   
+    binary_output = np.zeros_like(s_channel)      
+    binary_output[(s_channel > thresh[0]) & (s_channel <= thresh[1])] = 1
+    return binary_output
+
+def dir_threshold(img, sobel_kernel=3, thresh=(0, np.pi/2)):
+    gray = cv2.cvtColor(img, cv2.COLOR_RGB2GRAY)
+    
+    sobelx = cv2.Sobel(gray, cv2.CV_64F, 1, 0, ksize=sobel_kernel)
+    sobely = cv2.Sobel(gray, cv2.CV_64F, 0, 1, ksize=sobel_kernel)
+    
+    absgraddir = np.arctan2(np.absolute(sobely), np.absolute(sobelx))
+    binary_output =  np.zeros_like(absgraddir)
+    binary_output[(absgraddir >= thresh[0]) & (absgraddir <= thresh[1])] = 1
+    
+    return binary_output
+	
 def region_of_interest(img, vertices):
     mask = np.zeros_like(img)   
     
