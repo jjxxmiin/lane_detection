@@ -4,6 +4,7 @@ import cv2
 import numpy as np
 from imutils.video import WebcamVideoStream
 from detection import *
+import matplotlib.pyplot as plt
 
 def main():
     ret, mtx, dist, rvecs, tvecs = calibrate_camera(calib_images_dir='Example/camera_cal')
@@ -17,32 +18,51 @@ def main():
     pts = np.float32([[-100, img_h],[img_w // 2 - 76, img_h * .525], [img_w // 2 + 76,img_h * .525],  [img_w + 100, img_h]])
     while True:    
         ret, img = capture.read()
-        distort_img = undistort(img, mtx, dist)
-		
-        cv2.imshow('dis',distort_img)
+
         #img = capture.read()
         img = cv2.resize(img,(img_w,img_h))
-
-        ori_img = img
-
+		
+        #distort_img = undistort(img, mtx, dist)
+        #cv2.imshow('dis',distort_img)
+		
         # mask -> gray -> blur -> canny
-        img = mask_white_yellow(img)
-        img = grayscale(img)
-        img = gaussian_blur(img, 5)
-        img = canny(img,40,80)
-           
-        # image perspective transform
-        warped, unwarped, m, m_inv = perspective_transform(ori_img)
+        making = mask_white_yellow(img)
+        gray = grayscale(making)
+        blur = gaussian_blur(gray, 5)
+        cny = canny(blur,40,80)
+        #direction = dir_threshold(img, sobel_kernel=3, thresh=(0.7, 1.3)) 
+		#at = cv2.adaptiveThreshold(gray,255,cv2.ADAPTIVE_THRESH_GAUSSIAN_C, cv2.THRESH_BINARY,21,2)
+		
+        img = cv2.cvtColor(img,cv2.COLOR_BGR2RGB)
+		
+        #mag_threshold = mag_thresh(img, sobel_kernel=5, mag_thresh=(20, 100))
+        #Sobel = abs_sobel_thresh(img, orient='x', sobel_kernel=5, thresh=(0, 100))
+        #hls = hls_select(img,  thresh=(0, 100))
+		
+        #mag_threshold = cv2.cvtColor(mag_threshold, cv2.COLOR_RGB2BGR)
+        #Sobel = cv2.cvtColor(Sobel, cv2.COLOR_RGB2BGR)
+        #hls = cv2.cvtColor(hls, cv2.COLOR_RGB2BGR)
+		
+        #cv2.imshow('mag_threshold', mag_threshold)
+        #cv2.imshow('Sobel', Sobel)
+        #cv2.imshow('hls', hls)
+		
+        f, (ax1, ax2) = plt.subplots(1, 2, figsize=(16, 9))
+        f.tight_layout()
+        ax1.imshow(img)
+        ax1.set_title('Original Image', fontsize=25)
+        ax2.imshow(mag_threshold, cmap='gray')
+        ax2.set_title('Thresholded Magnitude', fontsize=25)
+        plt.subplots_adjust(left=0., right=1, top=0.9, bottom=0.)
+		
+        #warped, unwarped, m, m_inv = perspective_transform(ori_img)
         
         # 관심영역 추출
         vertices = np.array(pts, np.int32)
-        img = region_of_interest(img, [vertices])
+        roi = region_of_interest(cny, [vertices])
         
-        cv2.imshow('roi', img)
-		
-        # hough Line detection
         #houghLines = cv2.HoughLinesP(img, rho, theta, threshold, np.array([]), minLineLength=min_line_length, maxLineGap=max_line_gap)
-        hough = cv2.HoughLinesP(img, 2, np.pi / 180, 100, np.array([]), minLineLength = 100, maxLineGap = 50)
+        hough = cv2.HoughLinesP(roi, 2, np.pi / 180, 100, np.array([]), minLineLength = 100, maxLineGap = 50)
 
         if hough is not None:
             line_arr = np.squeeze(hough,axis=1)
@@ -75,14 +95,14 @@ def main():
                 circle_x, circle_y=find_intersection_pt(L_line, R_line)
                 cv2.circle(foundLinesImage, (circle_x,circle_y), 10, (0, 255, 255), -1)
 
-            origWithFoundLanes = weighted_img(foundLinesImage,ori_img)
+            origWithFoundLanes = weighted_img(foundLinesImage,img)
 
         else:
-            origWithFoundLanes = ori_img
+            origWithFoundLanes = img
 
         cv2.imshow('image',origWithFoundLanes)
-        cv2.imshow('warp',warped)
-        cv2.imshow('unwarp',unwarped)
+        #cv2.imshow('warp',warped)
+        #cv2.imshow('unwarp',unwarped)
 
         if cv2.waitKey(33) > 0: break
 
