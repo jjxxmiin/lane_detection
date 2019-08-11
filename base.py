@@ -6,6 +6,8 @@ from imutils.video import WebcamVideoStream
 from detection import *
 
 def main():
+    ret, mtx, dist, rvecs, tvecs = calibrate_camera(calib_images_dir='Example/camera_cal')
+    
     capture = cv2.VideoCapture("./test/outside_clockwise.avi")
     # capture = WebcamVideoStream(src=0).start()
     img_w = 720 #img.shape[0]
@@ -15,6 +17,9 @@ def main():
     pts = np.float32([[-100, img_h],[img_w // 2 - 76, img_h * .525], [img_w // 2 + 76,img_h * .525],  [img_w + 100, img_h]])
     while True:    
         ret, img = capture.read()
+        distort_img = undistort(img, mtx, dist)
+		
+        cv2.imshow('dis',distort_img)
         #img = capture.read()
         img = cv2.resize(img,(img_w,img_h))
 
@@ -77,7 +82,7 @@ def main():
 
         cv2.imshow('image',origWithFoundLanes)
         cv2.imshow('warp',warped)
-        #cv2.imshow('unwarp',unwarped)
+        cv2.imshow('unwarp',unwarped)
 
         if cv2.waitKey(33) > 0: break
 
