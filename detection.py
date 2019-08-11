@@ -9,6 +9,30 @@ import math
 def convert_hls(img):
     return cv2.cvtColor(img, cv2.COLOR_BGR2HLS)
 
+def channel(img, ch):
+    return img[:, :, ch]
+
+def convert_lab(img, ch=-1):
+    img = cv2.cvtColor(img, cv2.COLOR_BGR2LAB)
+    if ch < 0:
+        return img
+    else:
+        return img[:, :, ch]
+
+def convert_hsv(img, ch=-1):
+    img = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
+    if ch < 0:
+        return img
+    else:
+        return img[:, :, ch]
+
+def convert_yuv(img, ch=-1):
+    img = cv2.cvtColor(img, cv2.COLOR_BGR2YUV)
+    if ch < 0:
+        return img
+    else:
+        return img[:, :, ch]
+	
 def mask_white_yellow(image):
     converted = convert_hls(image)
     lower = np.uint8([  0, 200,   0])
@@ -133,6 +157,7 @@ def calibrate_camera(calib_images_dir, verbose=False):
     for filename in images:
 
         img = cv2.imread(filename)
+		
         gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
 
         # Find the chessboard corners
