@@ -18,8 +18,7 @@
 **Canny Edge Detection ->** ✔️ 
 *속도가 실시간 처리를 하기에는 조금 부족했다.*
 
-**sobel Edge Detection** -> ❌
-
+**+ sobel,hls Edge Detection** -> ✔️
 
 **가우시안 정규화 ->** ✔️
 
@@ -35,10 +34,6 @@
 
 **차선 그리기 ->** ✔️
 
-
-**Moving** ❌ 
-
-
 # 📣 ADDITION 📣
 
 **perspective transform** ✔️
@@ -53,7 +48,7 @@
 **red line(start line) detection** ❌
 
 
-**calibration** ❌
+**calibration** ✔️
 
 
 **ROS** ❌
