@@ -18,7 +18,7 @@
 **Canny Edge Detection ->** ✔️ 
 *속도가 실시간 처리를 하기에는 조금 부족했다.*
 
-**+ sobel,hls Edge Detection** -> ✔️
+**+ Sobel Edge Detection** -> ✔️
 
 **가우시안 정규화 ->** ✔️
 
