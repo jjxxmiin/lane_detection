@@ -54,48 +54,90 @@ def gaussian_blur(img, kernel_size):
 def canny(img, low_threshold, high_threshold):
     return cv2.Canny(img, low_threshold, high_threshold)
 
-def abs_sobel_thresh(img, orient='x', sobel_kernel=3, thresh=(0, 255)):    
+def abs_sobel_thresh(img, orient='x', sobel_kernel=3, thresh=(0, 255)):
+    img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
     gray = cv2.cvtColor(img, cv2.COLOR_RGB2GRAY)
-    if orient == 'x':
-        abs_sobel = np.absolute(cv2.Sobel(img, cv2.CV_64F, 1, 0, ksize=sobel_kernel))
-    if orient == 'y':
-        abs_sobel = np.absolute(cv2.Sobel(img, cv2.CV_64F, 0, 1, ksize=sobel_kernel))
-    scaled_sobel = np.uint8(255*abs_sobel/np.max(abs_sobel))
-    gradBinary = np.zeros_like(scaled_sobel)
-    gradBinary[(scaled_sobel >= thresh[0]) & (scaled_sobel <= thresh[1])] = 1
-    return gradBinary
-
-def mag_thresh(img, sobel_kernel=3, mag_thresh=(0, 255)):     
-    gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)    
-    sobelx = cv2.Sobel(gray, cv2.CV_64F, 1, 0, ksize=sobel_kernel)
-    sobely = cv2.Sobel(gray, cv2.CV_64F, 0, 1, ksize=sobel_kernel)   
-    gradmag = np.sqrt(sobelx**2 + sobely**2)   
-    scale_factor = np.max(gradmag)/255 
-    gradmag = (gradmag/scale_factor).astype(np.uint8)     
-    magBinary = np.zeros_like(gradmag)
-    magBinary[(gradmag >= mag_thresh[0]) & (gradmag <= mag_thresh[1])] = 1
+    scaled_sobel = None
     
-    return magBinary
-	
-def hls_select(img, thresh=(0, 255)):   
-    hls = cv2.cvtColor(img, cv2.COLOR_RGB2HLS)    
-    s_channel = hls[:,:,2]   
-    binary_output = np.zeros_like(s_channel)      
-    binary_output[(s_channel > thresh[0]) & (s_channel <= thresh[1])] = 1
-    return binary_output
+    # Sobel x
+    if orient == 'x':
+        sobelx = cv2.Sobel(gray, cv2.CV_64F, 1, 0,ksize=sobel_kernel) # Take the derivative in x
+        abs_sobelx = np.absolute(sobelx) # Absolute x derivative to accentuate lines away from horizontal
+        scaled_sobel = np.uint8(255*abs_sobelx/np.max(abs_sobelx))
+        
+    # Sobel y
+    else:
+        sobely = cv2.Sobel(gray, cv2.CV_64F, 0, 1, ksize=sobel_kernel) # Take the derivative in y
+        abs_sobely = np.absolute(sobely) # Absolute x derivative to accentuate lines away from horizontal
+        scaled_sobel = np.uint8(255*abs_sobely/np.max(abs_sobely))
+
+    # Threshold x gradient
+    thresh_min = thresh[0]
+    thresh_max = thresh[1]
+    grad_binary = np.zeros_like(scaled_sobel)
+    grad_binary[(scaled_sobel >= thresh_min) & (scaled_sobel <= thresh_max)] = 1
+    
+    return grad_binary
+
+def mag_thresh(img, sobel_kernel=3, mag_thresh=(0, 255)):
+    img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+    gray = cv2.cvtColor(img, cv2.COLOR_RGB2GRAY)
+    sobelx = cv2.Sobel(gray, cv2.CV_64F, 1, 0,ksize=sobel_kernel)
+    sobely = cv2.Sobel(gray, cv2.CV_64F, 0, 1,ksize=sobel_kernel)
+    magnitude = np.sqrt(np.square(sobelx)+np.square(sobely))
+    abs_magnitude = np.absolute(magnitude)
+    scaled_magnitude = np.uint8(255*abs_magnitude/np.max(abs_magnitude))
+    mag_binary = np.zeros_like(scaled_magnitude)
+    mag_binary[(scaled_magnitude >= mag_thresh[0]) & (scaled_magnitude <= mag_thresh[1])] = 1
+    
+    return mag_binary
 
 def dir_threshold(img, sobel_kernel=3, thresh=(0, np.pi/2)):
+    img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
     gray = cv2.cvtColor(img, cv2.COLOR_RGB2GRAY)
+    sobelx = cv2.Sobel(gray, cv2.CV_64F, 1, 0,ksize=sobel_kernel)
+    sobely = cv2.Sobel(gray, cv2.CV_64F, 0, 1,ksize=sobel_kernel)
+    abs_sobelx = np.absolute(sobelx)
+    abs_sobely = np.absolute(sobely)
+    arctan = np.arctan2(abs_sobely, abs_sobelx)
+    dir_binary = np.zeros_like(arctan)
+    dir_binary[(arctan >= thresh[0]) & (arctan <= thresh[1])] = 1
     
-    sobelx = cv2.Sobel(gray, cv2.CV_64F, 1, 0, ksize=sobel_kernel)
-    sobely = cv2.Sobel(gray, cv2.CV_64F, 0, 1, ksize=sobel_kernel)
-    
-    absgraddir = np.arctan2(np.absolute(sobely), np.absolute(sobelx))
-    binary_output =  np.zeros_like(absgraddir)
-    binary_output[(absgraddir >= thresh[0]) & (absgraddir <= thresh[1])] = 1
-    
-    return binary_output
+    return dir_binary
 	
+def combined_s_gradient_thresholds(img,debug=False):
+
+    # Choose a Sobel kernel size
+    ksize = 3 # Choose a larger odd number to smooth gradient measurements
+
+    # Apply each of the thresholding functions
+    gradx = abs_sobel_thresh(img, orient='x', sobel_kernel=ksize, thresh=(20, 100))
+    grady = abs_sobel_thresh(img, orient='y', sobel_kernel=ksize, thresh=(20, 100))
+    mag_binary = mag_thresh(img, sobel_kernel=ksize, mag_thresh=(20, 100))
+    dir_binary = dir_threshold(img, sobel_kernel=ksize, thresh=(0.7, 1.4))
+    
+    combined = np.zeros_like(dir_binary)
+    combined[((gradx == 1) & (grady == 1)) | ((mag_binary == 1) & (dir_binary == 1))] = 1
+    
+    img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+    hls = cv2.cvtColor(img, cv2.COLOR_RGB2HLS)
+    s_channel = hls[:,:,2]
+
+    # Threshold color channel
+    s_thresh_min = 100
+    s_thresh_max = 255
+    s_binary = np.zeros_like(s_channel)
+    s_binary[(s_channel >= s_thresh_min) & (s_channel <= s_thresh_max)] = 1
+    # Combine the two binary thresholds
+    combined_binary = np.zeros_like(combined)
+    
+    combined_binary[(s_binary == 1) | (combined == 1)] = 1
+    
+    if debug == False:
+        return combined, combined_binary
+    else:
+        return combined, combined_binary, s_binary, mag_binary, dir_binary
+
 def region_of_interest(img, vertices):
     mask = np.zeros_like(img)   
     
@@ -222,13 +264,7 @@ def calibrate_camera(calib_images_dir, verbose=False):
     return ret, mtx, dist, rvecs, tvecs
 
 
-def undistort(frame, mtx, dist, verbose=False):
+def undistort(frame, mtx, dist):
     frame_undistorted = cv2.undistort(frame, mtx, dist, newCameraMatrix=mtx)
-
-    if verbose:
-        fig, ax = plt.subplots(nrows=1, ncols=2)
-        ax[0].imshow(cv2.cvtColor(frame, cv2.COLOR_BGR2RGB))
-        ax[1].imshow(cv2.cvtColor(frame_undistorted, cv2.COLOR_BGR2RGB))
-        plt.show()
 
     return frame_undistorted

@@ -10,7 +10,6 @@ def main():
     ret, mtx, dist, rvecs, tvecs = calibrate_camera(calib_images_dir='Example/camera_cal')
     
     capture = cv2.VideoCapture("./test/outside_clockwise.avi")
-    # capture = WebcamVideoStream(src=0).start()
     img_w = 720 #img.shape[0]
     img_h = 380 #img.shape[1]
     
@@ -19,43 +18,23 @@ def main():
     while True:    
         ret, img = capture.read()
 
-        #img = capture.read()
         img = cv2.resize(img,(img_w,img_h))
 		
+        # distort_img
         #distort_img = undistort(img, mtx, dist)
-        #cv2.imshow('dis',distort_img)
-		
+        
+		# perspective
+        #warped, unwarped, m, m_inv = perspective_transform(img)
+        
+        # binary
+        combined, combined_binary = combined_s_gradient_thresholds(img)
+        #combined, combined_binary, s_binary, mag_binary, dir_binary = combined_s_gradient_thresholds(img,debug=True)
+        
         # mask -> gray -> blur -> canny
         making = mask_white_yellow(img)
         gray = grayscale(making)
         blur = gaussian_blur(gray, 5)
         cny = canny(blur,40,80)
-        #direction = dir_threshold(img, sobel_kernel=3, thresh=(0.7, 1.3)) 
-		#at = cv2.adaptiveThreshold(gray,255,cv2.ADAPTIVE_THRESH_GAUSSIAN_C, cv2.THRESH_BINARY,21,2)
-		
-        img = cv2.cvtColor(img,cv2.COLOR_BGR2RGB)
-		
-        #mag_threshold = mag_thresh(img, sobel_kernel=5, mag_thresh=(20, 100))
-        #Sobel = abs_sobel_thresh(img, orient='x', sobel_kernel=5, thresh=(0, 100))
-        #hls = hls_select(img,  thresh=(0, 100))
-		
-        #mag_threshold = cv2.cvtColor(mag_threshold, cv2.COLOR_RGB2BGR)
-        #Sobel = cv2.cvtColor(Sobel, cv2.COLOR_RGB2BGR)
-        #hls = cv2.cvtColor(hls, cv2.COLOR_RGB2BGR)
-		
-        #cv2.imshow('mag_threshold', mag_threshold)
-        #cv2.imshow('Sobel', Sobel)
-        #cv2.imshow('hls', hls)
-		
-        f, (ax1, ax2) = plt.subplots(1, 2, figsize=(16, 9))
-        f.tight_layout()
-        ax1.imshow(img)
-        ax1.set_title('Original Image', fontsize=25)
-        ax2.imshow(mag_threshold, cmap='gray')
-        ax2.set_title('Thresholded Magnitude', fontsize=25)
-        plt.subplots_adjust(left=0., right=1, top=0.9, bottom=0.)
-		
-        #warped, unwarped, m, m_inv = perspective_transform(ori_img)
         
         # 관심영역 추출
         vertices = np.array(pts, np.int32)
@@ -101,9 +80,14 @@ def main():
             origWithFoundLanes = img
 
         cv2.imshow('image',origWithFoundLanes)
-        #cv2.imshow('warp',warped)
-        #cv2.imshow('unwarp',unwarped)
-
+        cv2.imshow('combined',combined)
+        cv2.imshow('combined_binary',combined_binary)
+        #cv2.imshow('dis',distort_img)
+        #cv2.imshow('warped',warped)
+        #cv2.imshow('unwarped',unwarped)
+        #cv2.imshow('dis',distort_img)
+        #cv2.imshow('cny',cny)
+        
         if cv2.waitKey(33) > 0: break
 
     capture.release()
