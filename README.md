@@ -45,13 +45,10 @@
 **line spot detection** ✔️
 
 
-**red line(start line) detection** ❌
-
-
 **calibration** ✔️
 
 
-**ROS** ❌
+**ROS** ✔️ - source code upload not yet
 
 # :fire: Reference :fire:
 
